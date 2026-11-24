@@ -1,0 +1,50 @@
+[
+  {
+    "id": "prod-collab",
+    "name": "CloudDesk Collaboration",
+    "description": "Team collaboration, messaging, and file sharing",
+    "category": "collaboration"
+  },
+  {
+    "id": "prod-storage",
+    "name": "CloudDesk Storage",
+    "description": "Cloud file storage with versioning and sharing",
+    "category": "storage"
+  },
+  {
+    "id": "prod-billing",
+    "name": "CloudDesk Billing",
+    "description": "Subscription management and invoicing",
+    "category": "billing"
+  },
+  {
+    "id": "prod-workspaces",
+    "name": "CloudDesk Workspaces",
+    "description": "Isolated team workspaces with permissions",
+    "category": "workspaces"
+  },
+  {
+    "id": "prod-api",
+    "name": "CloudDesk API",
+    "description": "REST and GraphQL API for integrations",
+    "category": "api"
+  },
+  {
+    "id": "prod-sso",
+    "name": "CloudDesk SSO",
+    "description": "SAML and OIDC single sign-on",
+    "category": "security"
+  },
+  {
+    "id": "prod-mfa",
+    "name": "CloudDesk MFA",
+    "description": "Multi-factor authentication with TOTP and WebAuthn",
+    "category": "security"
+  },
+  {
+    "id": "prod-integrations",
+    "name": "CloudDesk Integrations",
+    "description": "Slack, Teams, Jira, and GitHub integrations",
+    "category": "integrations"
+  }
+]

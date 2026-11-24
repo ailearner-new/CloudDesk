@@ -1,0 +1,293 @@
+# TASKS.md — CloudDesk Project 1 Task List
+
+Derived from `CLAUDE.md` §19 phase plan and `PLAN.md` requirement catalog. Each task maps to a PRD row (F1–F14, N1–N8) and a phase. Check off as completed.
+
+## Phase 1 — Runtime skeleton (Requires: F14, N3)
+
+| ID | Task | PRD Rows | Status |
+|----|------|----------|--------|
+| 1.1 | Create `backend/app/core/config.py` with `get_settings()` | F14 | ✅ |
+| 1.2 | Create `backend/app/core/logging.py` with JSON formatter + `log_context` | F14 | ✅ |
+| 1.3 | Create `backend/app/core/database.py` with async session factory | F14 | ✅ |
+| 1.4 | Create `backend/app/middleware/request_id.py` (`RequestIdMiddleware`) | N3 | ✅ |
+| 1.5 | Create `backend/app/main.py` with health endpoints (`/health`, `/health/live`, `/health/ready`) | N3 | ✅ |
+| 1.6 | Create `backend/app/middleware/cors.py` | — | ✅ |
+| 1.7 | Create `.env.example` listing every env var from CLAUDE.md §10.1 | F14 | ✅ |
+| 1.8 | Create `Makefile` with setup, seed, ingest, backend, demo, test, lint targets | — | ✅ |
+| 1.9 | Create `tests/conftest.py` with offline env vars + auth fixtures | — | |
+| 1.10 | Create `tests/api/test_health.py` | N3 | |
+
+**Exit criteria:** Health tests pass offline. `.env.example` lists every variable. `make test` passes.
+
+---
+
+## Phase 2 — Persistence and demo data (Requires: F1, F4)
+
+| ID | Task | PRD Rows | Status |
+|----|------|----------|--------|
+| 2.1 | Create `backend/app/models/entities.py` (16 SQLAlchemy models) | Data model §6 | ✅ |
+| 2.2 | Create `database/schema.sql` (Postgres DDL) | Data model §6 | |
+| 2.3 | Create `database/rls_policies.sql` | Data model §6 | |
+| 2.4 | Create `database/seed.sql` (generated from models) | Data model §6 | |
+| 2.5 | Create `database/migrations/0001_*` and `0002_*` | Data model §6 | |
+| 2.6 | Create `backend/app/repositories/` (ticket, customer, knowledge, workflow, audit) | F1, F4 | ✅ |
+| 2.7 | Create `sample_data/*.json` (profiles, customers, subscriptions, workspaces, products, tickets, ticket_messages, incidents) | Data model §6 | ✅ |
+| 2.8 | Create `sample_data/support_articles.json` (22 articles) | Data model §6 | ✅ |
+| 2.9 | Create `sample_data/previous_resolutions.json` | Data model §6 | ✅ |
+| 2.10 | Create `scripts/seed.py` (idempotent, uuid5-based) | Data model §6 | ✅ |
+| 2.11 | Create `seed_service.bootstrap_demo_data()` in lifespan | Data model §6 | |
+| 2.12 | Create `tests/api/` ticket CRUD tests | F1 | |
+
+**Exit criteria:** Startup on empty SQLite with `DEMO_MODE=true` loads 13 tickets and 8 customers. Models and `schema.sql` agree. Second startup does not duplicate rows.
+
+---
+
+## Phase 3 — Identity and request guards (Requires: N1, N2, N6)
+
+| ID | Task | PRD Rows | Status |
+|----|------|----------|--------|
+| 3.1 | Create `backend/app/core/security.py` (JWT HS256, `require_role`) | N1 | ✅ |
+| 3.2 | Create auth router (`POST /auth/login`, `/auth/refresh`, `/auth/me`) | N1 | ✅ |
+| 3.3 | Create `backend/app/middleware/rate_limit.py` | N2 | ✅ |
+| 3.4 | Create `backend/app/middleware/audit.py` | N6 | ✅ |
+| 3.5 | Create demo token issuer | N1 | ✅ |
+| 3.6 | Verify middleware order: CORS → RequestId → RateLimit → Audit | N1–N6 | ✅ |
+| 3.7 | Create `tests/api/` auth and RBAC tests (viewer 403 on mutating routes) | N1, N6 | |
+
+**Exit criteria:** Missing/bad tokens rejected. `vic.viewer` gets 403 on mutating routes. Agent token accepted. Non-GET writes `audit_logs`. Limiter uses fakeredis.
+
+---
+
+## Phase 4 — Support API (Requires: F1, F4 read side)
+
+| ID | Task | PRD Rows | Status |
+|----|------|----------|--------|
+| 4.1 | Create `backend/app/services/ticket_service.py` | F1, F4 | ✅ |
+| 4.2 | Create `backend/app/services/customer_service.py` | F4 | ✅ |
+| 4.3 | Create `backend/app/api/tickets.py` (CRUD, run, workflow, events, reply, request-info, escalate) | F1 | ✅ |
+| 4.4 | Create `backend/app/api/customers.py` | F4 | ✅ |
+| 4.5 | Ensure `POST /api/v1/tickets` accepts email, chat, web, API channels | F1 | ✅ |
+| 4.6 | List, get, 404 behavior per contract | F1 | ✅ |
+| 4.7 | Duplicate run-while-waiting specified (enforced in Phase 10) | — | |
+
+**Exit criteria:** Contract, schemas, and future `frontend/lib/types.ts` shapes written together for every route.
+
+---
+
+## Phase 5 — Knowledge pipeline (Requires: F5, F6 retrieval half)
+
+| ID | Task | PRD Rows | Status |
+|----|------|----------|--------|
+| 5.1 | Create `rag/chunking.py` (heading split, 900/150 windows, prefix) | F5 | ✅ |
+| 5.2 | Create `rag/vector_store.py` (protocol + InMemory + Qdrant) | F5 | ✅ |
+| 5.3 | Create `rag/retriever.py` (semantic ∪ BM25 → RRF → rerank → dedupe) | F5 | ✅ |
+| 5.4 | Create `rag/ingest.py` | F5 | ✅ |
+| 5.5 | Create `scripts/ingest.py` (`make ingest`) | F5 | ✅ |
+| 5.6 | Create knowledge search and admin reindex routes | F5 | ✅ |
+| 5.7 | Create `tests/rag/` (ingest count, expected article, modes, cache, RRF, rerank, filters) | F5 | |
+
+**Exit criteria:** Retrieval hit-rate@3 measured. Customer-facing policy claims have an article to cite.
+
+---
+
+## Phase 6 — Tools and policy (Requires: F9 policy half)
+
+| ID | Task | PRD Rows | Status |
+|----|------|----------|--------|
+| 6.1 | Create `backend/app/tools/policy.py` (`ToolPolicy`) | F9 | |
+| 6.2 | Create `backend/app/tools/registry.py` (`ToolRegistry.execute`) | F9 | |
+| 6.3 | Create tool functions (`get_customer`, `get_subscription`, `get_ticket_history`, `search_docs`, `check_service_status`, `update_ticket`, `reset_demo_setting`, `create_refund_request`, `create_escalation`) | F9 | |
+| 6.4 | Create `integrations/protocols.py` | F9 | |
+| 6.5 | Create `integrations/mock/services.py` | F9 | |
+| 6.6 | Create `integrations/factory.py` | F9 | |
+| 6.7 | Create `tests/unit/` tool policy tests | F9 | |
+
+**Exit criteria:** Same execute path used after human approval. No tool bypasses registry. Unknown tools require approval.
+
+---
+
+## Phase 7 — Rules and guardrails (Requires: F3, F10 rule table, N4, N5, N7)
+
+| ID | Task | PRD Rows | Status |
+|----|------|----------|--------|
+| 7.1 | Create `agents/rules.py` (6 escalation rules with named teams, `rule_category`, `rule_severity`/`raise_severity`) | F3, F10 | |
+| 7.2 | Create `agents/prompts.py` (`SECURITY_PREAMBLE`, `wrap_untrusted`) | N4 | |
+| 7.3 | Create `backend/app/core/guardrails.py` (`scan_for_injection`, `validate_customer_output`, `scrub`, `SECRET_PATTERNS`) | N4, N5, N7 | |
+| 7.4 | Severity rules can raise but never lower model score | F3 | |
+| 7.5 | Escalation rules match dispute, deletion, security, data loss, legal, enterprise outage | F10 | |
+| 7.6 | CD-1013 flagged and wrapped as data | N4 | |
+| 7.7 | Output validation rejects internal URLs, secrets, other customers' data; failure = risk high | N5 | |
+| 7.8 | `scrub` removes card numbers, API keys, passwords | N7 | |
+| 7.9 | Create `tests/unit/` guardrail tests | F3, N4, N5 | |
+
+**Exit criteria:** Grey-area model judgement is only path left for Phase 8. Policy cases already have a decision.
+
+---
+
+## Phase 8 — Specialist agents (Requires: F2, F3, F4, F5, F6, F7, F8, F14)
+
+| ID | Task | PRD Rows | Status |
+|----|------|----------|--------|
+| 8.1 | Create `agents/specialists/` (Supervisor, Customer, Knowledge, Troubleshooting, Resolution, Escalation) | F2–F8 | |
+| 8.2 | Each specialist returns Pydantic model via `call_structured` | F2–F8 | |
+| 8.3 | Supervisor: classification + one-line summary | F2 | |
+| 8.4 | Supervisor: severity with reason (rules can raise) | F3 | |
+| 8.5 | Customer agent: context with no model call | F4 | |
+| 8.6 | Knowledge agent: evidence + similar cases | F5, F6 | |
+| 8.7 | Troubleshooting agent: probable causes + numbered steps | F7 | |
+| 8.8 | Resolution agent: plan from `plan_actions`, grounded + validated reply | F8 | |
+| 8.9 | Create `backend/app/schemas/workflow.py` | F2–F8 | |
+| 8.10 | Create `datasets/eval_cases.json` (initial cases with valid `expected_category`) | F2–F8 | |
+| 8.11 | Create `tests/agents/` (one test per specialist) | F2–F8 | |
+
+**Exit criteria:** No specialist writes SQL. No specialist calls tool except through `ToolRegistry`. Eval cases use valid `expected_category`.
+
+---
+
+## Phase 9 — Workflow graph and trace (Requires: F11 summary node, F13)
+
+| ID | Task | PRD Rows | Status |
+|----|------|----------|--------|
+| 9.1 | Create `agents/state.py` (`SupportState`) | F11, F13 | ✅ |
+| 9.2 | Create `agents/graph.py` (12-node graph) | F11, F13 | ✅ |
+| 9.3 | Create `agents/checkpointer.py` | F11 | ✅ |
+| 9.4 | Create `agents/nodes/` (one per node file) | F11 | |
+| 9.5 | Create `services/workflow_service.py` (`create_run`, `start_workflow`) | F11 | |
+| 9.6 | Create `services/workflow_view.py` | F13 | |
+| 9.7 | Create `GET /tickets/{id}/workflow` | F13 | |
+| 9.8 | Create `GET /tickets/{id}/events` | F13 | |
+| 9.9 | Create `backend/app/core/observability.py` (`WorkflowTracer`) | F13 | |
+| 9.10 | Create `tests/workflow/` (graph shape, routing, risk levels) | F11, F13 | |
+
+**Exit criteria:** Low-risk ticket completes `execute_resolution → ticket_summary → memory_update → END`. Events include node start/complete, tool, llm records. Telemetry failures don't fail run.
+
+---
+
+## Phase 10 — Approval and escalation (Requires: F9, F10, N4)
+
+| ID | Task | PRD Rows | Status |
+|----|------|----------|--------|
+| 10.1 | Create `agents/nodes/approval.py` (`human_approval` with `interrupt()`) | F9 | |
+| 10.2 | Create `EscalationAgent` | F10 | |
+| 10.3 | Create `approval_service.decide` | F9 | |
+| 10.4 | Create approval routes (`/approvals` list, get, approve, reject) | F9 | |
+| 10.5 | Create `execute_resolution` (runs approval-required action only when DB holds approved request) | F9 | |
+| 10.6 | Ticket status transitions (`waiting_on_approval`, etc.) | F9 | |
+| 10.7 | CD-1002 pauses with `waiting_on_approval` + `approval_requests` row | F9 | |
+| 10.8 | Approve resumes and runs refund tool once | F9 | |
+| 10.9 | Reject routes to escalation | F9 | |
+| 10.10 | Second run during pause returns 409 | F9 | |
+| 10.11 | Resume of non-paused run returns 409 | F9 | |
+| 10.12 | CD-1005, CD-1006, CD-1009, CD-1011 escalate without approval wait | F10 | |
+| 10.13 | CD-1013 does not take export action | N4 | |
+| 10.14 | Risk high for approval-required plans, policy escalation, critical severity, injection, failed output validation | F9, N5 | |
+| 10.15 | Create `scripts/demo.py` + `make demo [TICKET=]` | F9, F10 | ✅ |
+| 10.16 | Create `tests/workflow/` pause/resume/rejection/GDPR escalation tests | F9, F10 | |
+
+**Exit criteria:** Code before `interrupt()` idempotent. Approved and automatic paths share `ToolRegistry.execute`. Viewer gets 403 on run/approve/reject.
+
+---
+
+## Phase 11 — Memory (Requires: F4 notes, F11 write, N7)
+
+| ID | Task | PRD Rows | Status |
+|----|------|----------|--------|
+| 11.1 | Create `memory/short_term.py` | F11 | |
+| 11.2 | Create `memory/long_term.py` | F11 | |
+| 11.3 | Create `memory/memory_service.py` | F11 | |
+| 11.4 | `customer_context` recall (up to 10 notes) | F4 | |
+| 11.5 | `memory_update` node writes past issue, first 3 troubleshooting steps, resolution note | F11 | |
+| 11.6 | Every note through `scrub()`; exact duplicates skipped | N7 | |
+| 11.7 | No card numbers, API keys, passwords, raw ticket bodies in `customer_memory` | N7 | |
+| 11.8 | Retrieval cache keys `rag:{mode}:{category}:{top_k}:{query}`, TTL 300s | — | |
+| 11.9 | Short-term TTL 24h | — | |
+| 11.10 | Tests use fakeredis | — | |
+| 11.11 | Running CD-1002 through approval twice does not duplicate resolution note | F11 | |
+
+**Exit criteria:** Memory facades are only writers of `customer_memory`. Notes never include another customer's data.
+
+---
+
+## Phase 12 — Agent console (Requires: F12)
+
+| ID | Task | PRD Rows | Status |
+|----|------|----------|--------|
+| 12.1 | Create `frontend/` Next.js 15 + Tailwind 3 | F12 | |
+| 12.2 | Create `frontend/components/ui/` hand-written kit (no UI library, no gradients) | F12 | |
+| 12.3 | Create `frontend/lib/{api,types,hooks,format,cn}.ts` | F12 | |
+| 12.4 | Create `frontend/components/layout/{nav,AuthProvider,Shell}` | F12 | |
+| 12.5 | Create pages: `/login`, `/dashboard`, `/tickets`, `/tickets/[id]`, `/customers`, `/customers/[id]`, `/knowledge`, `/escalations`, `/agents`, `/audit`, `/settings`, `/api/health` | F12 | |
+| 12.6 | Create ticket workflow screen (`app/(dashboard)/tickets/[id]/page.tsx`) with three-column layout | F12 | |
+| 12.7 | Create `components/ticket/{WorkflowSteps,WorkflowPanel,ApprovalBar,ReplyComposer}` | F12 | |
+| 12.8 | Role-aware UI: viewer sees disabled action buttons | F12 | |
+| 12.9 | Approve/Reject only when `approval_status === "pending"` | F12 | |
+| 12.10 | Create `frontend/__tests__/` (StatusPill, EmptyState, WorkflowSteps.deriveSteps, api helpers) | F12 | |
+
+**Exit criteria:** Browser pass: log in as agent, open CD-1002, run workflow, watch steps poll, approve, send reply. Repeat as viewer, actions disabled. Frontend image has no service-role key. No UI-library dependency, no gradients.
+
+---
+
+## Phase 13 — Evaluation and delivery (Requires: F2, F5, F8, F10, F14, N8)
+
+| ID | Task | PRD Rows | Status |
+|----|------|----------|--------|
+| 13.1 | Create `tests/evaluation/` | F2, F5, F8, F10 | |
+| 13.2 | Finalize `datasets/eval_cases.json` with valid `expected_category` | F2–F10 | |
+| 13.3 | Eval metrics meet thresholds (classification ≥0.80, retrieval hit@3 ≥0.75, escalation ≥0.90, citation ≥0.90, grounding ≥0.90) | F2–F10 | |
+| 13.4 | Create `tests/deployment/` (compose services, Dockerfile hygiene, `.env.example` coverage, no committed `.env`) | N8 | |
+| 13.5 | Create `backend/Dockerfile` (multi-stage, non-root, HEALTHCHECK) | N8 | |
+| 13.6 | Create `frontend/Dockerfile` (node:22-alpine, standalone, non-root, HEALTHCHECK) | N8 | |
+| 13.7 | Create `docker-compose.yml` | N8 | |
+| 13.8 | Create `deployment/{aws,azure,gcp,kubernetes,docker,scripts/}` | N8 | |
+| 13.9 | Create `.github/workflows/` (`test.yml`, `security.yml`, `docker-build.yml`, `terraform-validate.yml`, `_deploy.yml`) | — | |
+| 13.10 | `docker compose config -q` passes | N8 | |
+| 13.11 | `make terraform-validate` passes locally | N8 | |
+| 13.12 | `BASE_URL=http://localhost:8000 make smoke` passes | F14 | |
+| 13.13 | `make test` then `make demo` for CD-1002 and CD-1005 | F14 | |
+
+**Exit criteria:** Phases 1–13 validated locally. `MEMORY.md` updated with honest status. No cloud credentials used until applied to real account.
+
+---
+
+## Requirement Traceability
+
+| ID | Requirement | Proven by phase |
+|----|-------------|-----------------|
+| F1 | Create ticket via POST /api/v1/tickets | 4 |
+| F2 | Classify into 10 categories + summary | 8, 13 |
+| F3 | Severity low/medium/high/critical with reason | 7, 8 |
+| F4 | Load customer, subscription, workspace, tickets, memory | 4, 8, 11 |
+| F5 | Cited evidence from hybrid retrieval | 5, 8, 13 |
+| F6 | Similar previously resolved cases | 5, 8 |
+| F7 | Diagnosis: probable causes + numbered steps | 8 |
+| F8 | Resolution plan: summary, reply, notes, actions | 8, 13 |
+| F9 | Consequential actions need human approval | 6, 10 |
+| F10 | Escalate policy cases to named team | 7, 10, 13 |
+| F11 | Ticket summary + memory update after every run | 9, 11 |
+| F12 | Approve/reject/escalate/reply/request-info from one screen | 12 |
+| F13 | Every node/tool/LLM call inspectable | 9 |
+| F14 | Runs offline in DEMO_MODE with no API key | 1, 13 |
+| N1 | JWT auth (Supabase-compatible HS256) | 3 |
+| N2 | Rate limiting fixed window in Redis | 3 |
+| N3 | X-Request-ID on every response | 1 |
+| N4 | Ticket text treated as data (prompt injection defence) | 7, 10 |
+| N5 | Output validation before reply reaches customer | 7 |
+| N6 | Audit every non-GET request | 3 |
+| N7 | No secrets in memory notes | 7, 11 |
+| N8 | Deployable as containers to AWS, Azure, GCP | 13 |
+
+---
+
+## Commands
+
+```bash
+make setup            # .venv + deps + .env
+make seed             # load sample data into DB
+make ingest           # chunk + index knowledge base
+make backend          # FastAPI on :8000
+make demo             # CD-1002 refund end-to-end (pauses for approval)
+make demo TICKET=CD-1005  # escalation demo
+make test             # backend pytest (~6s, offline)
+make lint             # ruff
+make smoke            # BASE_URL=http://localhost:8000 make smoke
+```

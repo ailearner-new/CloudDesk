@@ -1,0 +1,50 @@
+[
+  {
+    "id": "acme-corp",
+    "name": "Acme Corp",
+    "email": "cto@acmecorp.demo",
+    "plan": "enterprise"
+  },
+  {
+    "id": "startupio",
+    "name": "StartupIO",
+    "email": "ops@startupio.demo",
+    "plan": "pro"
+  },
+  {
+    "id": "globalcorp",
+    "name": "GlobalCorp",
+    "email": "finance@globalcorp.demo",
+    "plan": "business"
+  },
+  {
+    "id": "freelancer",
+    "name": "Freelance Dev",
+    "email": "dev@freelancer.demo",
+    "plan": "free"
+  },
+  {
+    "id": "enterprise-co",
+    "name": "Enterprise Co",
+    "email": "security@enterprise.demo",
+    "plan": "enterprise"
+  },
+  {
+    "id": "nonprofit",
+    "name": "Nonprofit Org",
+    "email": "admin@nonprofit.demo",
+    "plan": "pro"
+  },
+  {
+    "id": "smallbiz",
+    "name": "SmallBiz Inc",
+    "email": "founder@smallbiz.demo",
+    "plan": "free"
+  },
+  {
+    "id": "midmarket",
+    "name": "MidMarket Ltd",
+    "email": "ops@midmarket.demo",
+    "plan": "business"
+  }
+]

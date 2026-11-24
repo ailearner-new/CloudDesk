@@ -1,0 +1,72 @@
+[
+  {
+    "id": "ws-acme-eng",
+    "customer_id": "acme-corp",
+    "name": "Engineering",
+    "storage_gb_used": 450,
+    "storage_gb_limit": 1000
+  },
+  {
+    "id": "ws-acme-sales",
+    "customer_id": "acme-corp",
+    "name": "Sales",
+    "storage_gb_used": 120,
+    "storage_gb_limit": 500
+  },
+  {
+    "id": "ws-startupio-main",
+    "customer_id": "startupio",
+    "name": "Main Workspace",
+    "storage_gb_used": 45,
+    "storage_gb_limit": 100
+  },
+  {
+    "id": "ws-globalcorp-prod",
+    "customer_id": "globalcorp",
+    "name": "Production",
+    "storage_gb_used": 800,
+    "storage_gb_limit": 2000
+  },
+  {
+    "id": "ws-globalcorp-staging",
+    "customer_id": "globalcorp",
+    "name": "Staging",
+    "storage_gb_used": 200,
+    "storage_gb_limit": 500
+  },
+  {
+    "id": "ws-freelancer",
+    "customer_id": "freelancer",
+    "name": "Personal",
+    "storage_gb_used": 5,
+    "storage_gb_limit": 10
+  },
+  {
+    "id": "ws-enterprise-main",
+    "customer_id": "enterprise-co",
+    "name": "Main Workspace",
+    "storage_gb_used": 1500,
+    "storage_gb_limit": 5000
+  },
+  {
+    "id": "ws-nonprofit",
+    "customer_id": "nonprofit",
+    "name": "Operations",
+    "storage_gb_used": 25,
+    "storage_gb_limit": 100
+  },
+  {
+    "id": "ws-smallbiz",
+    "customer_id": "smallbiz",
+    "name": "Team Workspace",
+    "storage_gb_used": 8,
+    "storage_gb_limit": 10
+  },
+  {
+    "id": "ws-midmarket",
+    "customer_id": "midmarket",
+    "name": "Primary",
+    "storage_gb_used": 600,
+    "storage_gb_limit": 1000
+  }
+]

@@ -1,0 +1,248 @@
+[
+  {
+    "ticket_id": "CD-0987",
+    "title": "SAML cert rotation",
+    "category": "login_issue",
+    "customer_id": "enterprise-co",
+    "severity": "critical",
+    "resolution_summary": "Rotated IdP certificate in Okta and updated CloudDesk SSO config. Verified with test user before full rollout.",
+    "troubleshooting_steps": [
+      "Identified expired SAML signing certificate in Okta",
+      "Generated new certificate in Okta",
+      "Updated CloudDesk Admin → Security → SSO Configuration with new cert",
+      "Tested with single user account",
+      "Rolled out to all 200 users"
+    ],
+    "evidence_used": [
+      "kb://sso-troubleshooting#diagnosis",
+      "kb://enterprise-security#single-sign-on-sso"
+    ],
+    "actions_taken": [
+      { "tool": "update_ticket", "args": { "status": "waiting_on_customer" } }
+    ],
+    "resolved_at": "2025-11-15T14:30:00Z",
+    "resolved_by": "sam.agent@clouddesk.demo"
+  },
+  {
+    "ticket_id": "CD-0982",
+    "title": "Refund for 5 deactivated seats",
+    "category": "billing",
+    "customer_id": "startupio",
+    "severity": "medium",
+    "resolution_summary": "Issued prorated refund for 5 seats deactivated before billing period start. Refund approved by billing admin.",
+    "troubleshooting_steps": [
+      "Verified seat deactivation dates in billing history",
+      "Confirmed deactivation was before period start (Dec 1)",
+      "Calculated prorated amount: 5 seats × $15 × 30/30 = $75",
+      "Submitted refund request for approval",
+      "Approved by billing admin, processed to original payment method"
+    ],
+    "evidence_used": [
+      "kb://billing-refunds#refund-eligibility",
+      "kb://subscription-management#seat-management"
+    ],
+    "actions_taken": [
+      { "tool": "create_refund_request", "args": { "amount_cents": 7500, "reason": "Prorated refund for 5 seats deactivated before period start" } }
+    ],
+    "resolved_at": "2025-11-10T10:15:00Z",
+    "resolved_by": "sam.agent@clouddesk.demo"
+  },
+  {
+    "ticket_id": "CD-0975",
+    "title": "API 429 on batch job",
+    "category": "api_failure",
+    "customer_id": "globalcorp",
+    "severity": "high",
+    "resolution_summary": "Identified burst limit issue. Recommended exponential backoff and request spreading. Customer implemented fixes.",
+    "troubleshooting_steps": [
+      "Analyzed API logs — burst of 150 requests in 30 seconds",
+      "Business plan burst limit is 100/minute",
+      "Recommended exponential backoff with jitter",
+      "Suggested spreading job over 5-minute window",
+      "Customer implemented changes, no further 429s"
+    ],
+    "evidence_used": [
+      "kb://api-rate-limits#handling-429-responses",
+      "kb://api-rate-limits#best-practices"
+    ],
+    "actions_taken": [
+      { "tool": "update_ticket", "args": { "status": "waiting_on_customer" } }
+    ],
+    "resolved_at": "2025-11-05T16:45:00Z",
+    "resolved_by": "sam.agent@clouddesk.demo"
+  },
+  {
+    "ticket_id": "CD-0968",
+    "title": "Storage quota exceeded - version cleanup",
+    "category": "storage_quota",
+    "customer_id": "midmarket",
+    "severity": "medium",
+    "resolution_summary": "Workspace at 98% capacity. Enabled auto-cleanup keeping last 10 versions. Freed 45 GB.",
+    "troubleshooting_steps": [
+      "Checked storage breakdown: 60% file versions, 25% trash, 15% active files",
+      "Enabled Admin → Workspace → Version Retention: keep last 10, delete older than 90 days",
+      "Ran manual cleanup job",
+      "Emptied trash folder",
+      "Usage dropped from 98% to 55%"
+    ],
+    "evidence_used": [
+      "kb://storage-quota#common-causes-of-high-usage",
+      "kb://storage-quota#resolving-quota-issues"
+    ],
+    "actions_taken": [
+      { "tool": "update_ticket", "args": { "status": "resolved" } }
+    ],
+    "resolved_at": "2025-10-28T11:20:00Z",
+    "resolved_by": "sam.agent@clouddesk.demo"
+  },
+  {
+    "ticket_id": "CD-0961",
+    "title": "External sharing blocked on Pro plan",
+    "category": "workspace_permissions",
+    "customer_id": "startupio",
+    "severity": "low",
+    "resolution_summary": "Pro plan supports read-only external sharing. Admin had disabled it in workspace settings. Re-enabled and tested.",
+    "troubleshooting_steps": [
+      "Verified Pro plan includes external sharing (read-only)",
+      "Checked Workspace Admin → Settings → Security → External Sharing",
+      "Found setting was disabled by previous admin",
+      "Re-enabled external sharing",
+      "Tested with contractor email — share link created successfully"
+    ],
+    "evidence_used": [
+      "kb://workspace-permissions#external-sharing",
+      "kb://workspace-permissions#troubleshooting-share-button-greyed-out"
+    ],
+    "actions_taken": [
+      { "tool": "update_ticket", "args": { "status": "resolved" } }
+    ],
+    "resolved_at": "2025-10-20T09:30:00Z",
+    "resolved_by": "sam.agent@clouddesk.demo"
+  },
+  {
+    "ticket_id": "CD-0954",
+    "title": "Slack integration webhook failure",
+    "category": "integration",
+    "customer_id": "nonprofit",
+    "severity": "medium",
+    "resolution_summary": "Slack bot token was revoked during workspace migration. Reinstalled Slack app, reconfigured channel.",
+    "troubleshooting_steps": [
+      "Checked Integration Settings → Slack → Connection Status: 'Disconnected'",
+      "Found 'app_uninstalled' in Slack audit log from 3 days ago",
+      "Reinstalled Slack app via Settings → Integrations → Slack",
+      "Re-added bot to #support channel: /invite @CloudDesk",
+      "Test connection successful, notifications resumed"
+    ],
+    "evidence_used": [
+      "kb://integration-troubleshooting#slack-integration",
+      "kb://slack-setup#troubleshooting"
+    ],
+    "actions_taken": [
+      { "tool": "update_ticket", "args": { "status": "resolved" } }
+    ],
+    "resolved_at": "2025-10-15T13:10:00Z",
+    "resolved_by": "sam.agent@clouddesk.demo"
+  },
+  {
+    "ticket_id": "CD-0942",
+    "title": "MFA lockout - backup codes used",
+    "category": "login_issue",
+    "customer_id": "smallbiz",
+    "severity": "high",
+    "resolution_summary": "User lost authenticator app. Used backup code to regain access, then set up new MFA with WebAuthn.",
+    "troubleshooting_steps": [
+      "User attempted login, clicked 'Use backup code'",
+      "Entered one of 10 saved backup codes (8-digit)",
+      "Successfully logged in",
+      "Immediately went to Settings → Security → MFA",
+      "Registered WebAuthn security key (YubiKey) as primary",
+      "Regenerated backup codes and saved in password manager"
+    ],
+    "evidence_used": [
+      "kb://mfa-recovery#step-by-step-using-backup-codes",
+      "kb://mfa-recovery#preventing-lockout"
+    ],
+    "actions_taken": [
+      { "tool": "update_ticket", "args": { "status": "resolved" } }
+    ],
+    "resolved_at": "2025-10-10T15:45:00Z",
+    "resolved_by": "sam.agent@clouddesk.demo"
+  },
+  {
+    "ticket_id": "CD-0935",
+    "title": "GDPR workspace deletion request",
+    "category": "account",
+    "customer_id": "enterprise-co",
+    "severity": "medium",
+    "resolution_summary": "Processed GDPR erasure request for Legacy-Archive workspace. 30-day grace period initiated, data export provided.",
+    "troubleshooting_steps": [
+      "Verified request from registered admin email",
+      "Confirmed workspace unused for 2+ years",
+      "Initiated deletion: Workspace → Settings → Delete Workspace",
+      "Generated data export (JSON + files ZIP) for customer",
+      "Sent completion certificate with erasure categories",
+      "Workspace in 'pending deletion' state, recoverable for 30 days"
+    ],
+    "evidence_used": [
+      "kb://account-deletion#gdpr-data-erasure-right-to-be-forgotten",
+      "kb://account-deletion#data-export-before-deletion"
+    ],
+    "actions_taken": [
+      { "tool": "create_escalation", "args": { "team": "compliance", "reason": "GDPR workspace deletion request" } }
+    ],
+    "resolved_at": "2025-10-05T10:00:00Z",
+    "resolved_by": "sam.agent@clouddesk.demo"
+  },
+  {
+    "ticket_id": "CD-0928",
+    "title": "File recovery from .sync-conflicts",
+    "category": "storage_quota",
+    "customer_id": "globalcorp",
+    "severity": "high",
+    "resolution_summary": "200+ files 'disappeared' — found in .sync-conflicts folder from GitHub integration. Restored to original location.",
+    "troubleshooting_steps": [
+      "Searched audit log for delete events — none found",
+      "Checked Workspace → .sync-conflicts folder",
+      "Found 234 files from 'Q4 Financials' folder",
+      "Files moved by GitHub sync during merge conflict",
+      "Selected all → Restore to original location",
+      "Verified all files accessible and intact"
+    ],
+    "evidence_used": [
+      "kb://file-recovery#recovering-disappeared-files",
+      "kb://integration-troubleshooting#github-integration"
+    ],
+    "actions_taken": [
+      { "tool": "update_ticket", "args": { "status": "resolved" } }
+    ],
+    "resolved_at": "2025-09-28T14:20:00Z",
+    "resolved_by": "sam.agent@clouddesk.demo"
+  },
+  {
+    "ticket_id": "CD-0915",
+    "title": "Payment dispute - fraudulent charge",
+    "category": "billing",
+    "customer_id": "midmarket",
+    "severity": "critical",
+    "resolution_summary": "Investigated $2,400 charge. Found unauthorized plan upgrade via compromised admin credentials. Reversed charge, enforced MFA.",
+    "troubleshooting_steps": [
+      "Reviewed audit log: admin@midmarket.demo upgraded plan at 03:00 UTC",
+      "IP geolocation: different country from admin's usual location",
+      "Admin confirmed credentials compromised (phishing)",
+      "Reverted plan to Business, issued full refund",
+      "Enforced MFA on all admin accounts",
+      "Rotated all API keys"
+    ],
+    "evidence_used": [
+      "kb://billing-refunds#refund-eligibility",
+      "kb://security-best-practices#authentication",
+      "kb://audit-log#common-queries"
+    ],
+    "actions_taken": [
+      { "tool": "create_refund_request", "args": { "amount_cents": 240000, "reason": "Fraudulent upgrade via compromised credentials" } },
+      { "tool": "create_escalation", "args": { "team": "security", "reason": "Compromised admin credentials, unauthorized plan change" } }
+    ],
+    "resolved_at": "2025-09-20T11:30:00Z",
+    "resolved_by": "sam.agent@clouddesk.demo"
+  }
+]

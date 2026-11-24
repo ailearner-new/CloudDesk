@@ -1,0 +1,66 @@
+[
+  {
+    "id": "sub-acme",
+    "customer_id": "acme-corp",
+    "plan": "enterprise",
+    "seats": 50,
+    "status": "active",
+    "renewal_at": "2026-12-01T00:00:00Z"
+  },
+  {
+    "id": "sub-startupio",
+    "customer_id": "startupio",
+    "plan": "pro",
+    "seats": 10,
+    "status": "active",
+    "renewal_at": "2026-06-15T00:00:00Z"
+  },
+  {
+    "id": "sub-globalcorp",
+    "customer_id": "globalcorp",
+    "plan": "business",
+    "seats": 100,
+    "status": "active",
+    "renewal_at": "2026-09-01T00:00:00Z"
+  },
+  {
+    "id": "sub-freelancer",
+    "customer_id": "freelancer",
+    "plan": "free",
+    "seats": 1,
+    "status": "active",
+    "renewal_at": "2026-12-31T00:00:00Z"
+  },
+  {
+    "id": "sub-enterprise",
+    "customer_id": "enterprise-co",
+    "plan": "enterprise",
+    "seats": 200,
+    "status": "active",
+    "renewal_at": "2026-03-01T00:00:00Z"
+  },
+  {
+    "id": "sub-nonprofit",
+    "customer_id": "nonprofit",
+    "plan": "pro",
+    "seats": 5,
+    "status": "active",
+    "renewal_at": "2026-07-01T00:00:00Z"
+  },
+  {
+    "id": "sub-smallbiz",
+    "customer_id": "smallbiz",
+    "plan": "free",
+    "seats": 2,
+    "status": "active",
+    "renewal_at": "2026-12-31T00:00:00Z"
+  },
+  {
+    "id": "sub-midmarket",
+    "customer_id": "midmarket",
+    "plan": "business",
+    "seats": 75,
+    "status": "active",
+    "renewal_at": "2026-10-01T00:00:00Z"
+  }
+]
